@@ -13,5 +13,5 @@ def create_paste(paste: schemas.PasteCreate, db: Session = Depends(get_db)):
 def read_paste(paste_id: int, db: Session = Depends(get_db)):
     db_paste = crud.get_paste(db, paste_id=paste_id)
     if db_paste is None:
-        raise HTTPException(status_code=404, detail="Paste not found")
+        raise HTTPException(status_code=404, detail="Paste not found or expired")
     return db_paste

@@ -11,12 +11,13 @@ const ViewPaste = () => {
     const loadPaste = async () => {
       try {
         const pasteData = await getPaste(pasteId);
+        const createdAt = new Date(pasteData.created_at);
+
         setPaste({
-          ...pasteData,
-          createdAt: new Date(pasteData.createdAt),
-          expiresAt: pasteData.expiresAt
-            ? new Date(pasteData.expiresAt)
-            : undefined,
+          id: pasteData.id,
+          content: pasteData.content,
+          created_at: createdAt,
+          expire_at: pasteData.expire_at,
         });
       } catch (error) {
         console.error("Failed to load paste:", error);
@@ -32,8 +33,18 @@ const ViewPaste = () => {
     <div className="view-paste-page">
       <pre className="paste-content">{paste.content}</pre>
       <div className="paste-meta">
-        <span>Created: {new Date(paste.createdAt).toLocaleString()}</span>
-        {paste.language && <span>Language: {paste.language}</span>}
+        <span>
+          Created:
+          {paste.created_at.toLocaleString("en-GB", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          })}
+        </span>
       </div>
     </div>
   );

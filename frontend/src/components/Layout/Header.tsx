@@ -5,7 +5,7 @@ const Header = () => {
     <header className="app-header">
       <nav>
         <Link to="/" className="logo">
-          PasteBin Clone
+          PasteBin
         </Link>
         <div className="nav-links">
           <Link to="/create">New Paste</Link>

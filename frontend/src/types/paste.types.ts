@@ -1,13 +1,12 @@
 export interface Paste {
   id: string;
   content: string;
-  createdAt: Date;
-  language?: string;
-  expiresAt?: Date;
+  created_at: Date;
+  expire_at?: string;
 }
 
-export type LanguageOption = {
-  value: string;
-  label: string;
-  ext: string;
-};
+// export type LanguageOption = {
+//   value: string;
+//   label: string;
+//   ext: string;
+// };

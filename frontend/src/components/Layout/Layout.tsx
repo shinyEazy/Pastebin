@@ -8,7 +8,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ fontFamily: "monospace" }}>
       <Header />
       <main className="main-content">{children}</main>
       <Footer />

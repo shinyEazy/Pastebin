@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 
 interface EditorProps {
   content: string;
@@ -16,7 +16,7 @@ const PasteEditor = ({ content, onChange }: EditorProps) => {
         value={content}
         onChange={handleChange}
         placeholder="Enter your paste content..."
-        rows={15}
+        rows={5}
       />
     </div>
   );

@@ -5,8 +5,8 @@ export function formatDate(date: Date): string {
   }).format(date);
 }
 
-export function detectLanguage(content: string): string | undefined {
-  if (content.startsWith("<")) return "html";
-  if (content.includes("function")) return "javascript";
-  return undefined;
-}
+// export function detectLanguage(content: string): string | undefined {
+//   if (content.startsWith("<")) return "html";
+//   if (content.includes("function")) return "javascript";
+//   return undefined;
+// }
