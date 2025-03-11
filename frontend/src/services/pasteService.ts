@@ -6,16 +6,22 @@ export interface PasteResponse {
   id: string;
   content: string;
   created_at: string;
-  expire_at?: string;
+  expiration: string;
   views: number;
+  is_active: boolean;
 }
 
-export const savePaste = async (content: string, expireAt?: string) => {
-  const response = await axios.post<PasteResponse>(`${API_BASE}/pastes`, {
-    content,
-    expire_at: expireAt,
-  });
-  return response.data;
+export const savePaste = async (content: string, expiration: string) => {
+  try {
+    const response = await axios.post<PasteResponse>(`${API_BASE}/pastes`, {
+      content,
+      expiration,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to save paste:", error);
+    throw error;
+  }
 };
 
 export const getPaste = async (id: string) => {

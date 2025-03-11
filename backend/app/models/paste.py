@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Text
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean
 from app.database import Base  
 import pytz
 
@@ -10,6 +10,7 @@ class Paste(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(local_tz))
-    expire_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(local_tz))
+    expiration = Column(String(50), default="Never")
     views = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)  

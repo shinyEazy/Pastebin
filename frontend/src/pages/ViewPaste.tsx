@@ -21,8 +21,9 @@ const ViewPaste = () => {
           id: pasteData.id,
           content: pasteData.content,
           created_at: createdAt,
-          expire_at: pasteData.expire_at,
+          expiration: pasteData.expiration,
           views: pasteData.views,
+          is_active: pasteData.is_active,
         });
       } catch (error) {
         console.error("Failed to load paste:", error);
@@ -32,7 +33,13 @@ const ViewPaste = () => {
     loadPaste();
   }, [pasteId]);
 
-  if (!paste) return <div>Loading...</div>;
+  if (!paste)
+    return (
+      <div>
+        This page is no longer available. It has either expired, been removed by
+        its creator, or removed by one of the Pastebin staff.
+      </div>
+    );
 
   return (
     <div className="view-paste-page">

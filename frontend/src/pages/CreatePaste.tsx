@@ -4,52 +4,34 @@ import PasteEditor from "../components/PasteEditor/Editor";
 import usePaste from "../hooks/usePaste";
 import Button from "../components/common/Button";
 
+const EXPIRATION_OPTIONS = [
+  "Never",
+  "Burn After Read",
+  "1 Minute",
+  "10 Minutes",
+  "1 Hour",
+  "1 Day",
+  "1 Week",
+  "2 Weeks",
+  "1 Month",
+  "6 Months",
+  "1 Year",
+];
+
 const CreatePaste = () => {
   const navigate = useNavigate();
   const { createPaste, loading } = usePaste();
   const [content, setContent] = useState("");
-  const [expireAt, setExpireAt] = useState<string | "">("");
+  const [expiration, setExpiration] = useState<string | "">("Never");
 
   const handleSubmit = async () => {
-    let localISO: string | undefined;
-
     try {
       if (!content.trim()) {
         alert("Content cannot be empty!");
         return;
       }
 
-      if (expireAt) {
-        const date = new Date(expireAt);
-        const now = new Date();
-
-        if (isNaN(date.getTime())) {
-          alert("Invalid expiration time!");
-          return;
-        }
-
-        if (date <= now) {
-          alert("Expiration time must be in the future!");
-          return;
-        }
-
-        localISO =
-          date.getFullYear() +
-          "-" +
-          String(date.getMonth() + 1).padStart(2, "0") +
-          "-" +
-          String(date.getDate()).padStart(2, "0") +
-          "T" +
-          String(date.getHours()).padStart(2, "0") +
-          ":" +
-          String(date.getMinutes()).padStart(2, "0") +
-          ":" +
-          String(date.getSeconds()).padStart(2, "0");
-
-        console.log(localISO);
-      }
-
-      const id = await createPaste(content, localISO);
+      const id = await createPaste(content, expiration);
       navigate(`/paste/${id}`);
     } catch (error) {
       console.error("Failed to create paste:", error);
@@ -57,20 +39,24 @@ const CreatePaste = () => {
   };
 
   return (
-    <div className="create-paste-page">
-      <h2>Create New Paste</h2>
+    <div className="create-paste-page" style={{ height: "500px" }}>
+      <h2>New Paste</h2>
       <PasteEditor content={content} onChange={setContent} />
 
-      <label>Expiration Date & Time:</label>
-      <input
-        type="datetime-local"
-        value={expireAt}
-        onChange={(e) => setExpireAt(e.target.value)}
-      />
-
-      <div className="action-bar">
+      <label>Paste Expiration:</label>
+      <select
+        value={expiration}
+        onChange={(e) => setExpiration(e.target.value)}
+      >
+        {EXPIRATION_OPTIONS.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+      <div className="action-bar" style={{ marginTop: "8px" }}>
         <Button onClick={handleSubmit} loading={loading}>
-          Save Paste
+          Create New Paste
         </Button>
       </div>
     </div>

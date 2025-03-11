@@ -3,14 +3,15 @@ from pydantic import BaseModel
 
 class PasteCreate(BaseModel):
     content: str
-    expire_at: datetime | None = None
+    expiration: str
 
 class Paste(BaseModel):
     id: int
     content: str
     created_at: datetime
-    expire_at: datetime | None
+    expiration: str 
     views: int
+    is_active: bool
 
     class Config:
         orm_mode = True

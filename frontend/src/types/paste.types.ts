@@ -2,8 +2,9 @@ export interface Paste {
   id: string;
   content: string;
   created_at: Date;
-  expire_at?: string;
+  expiration: string;
   views: number;
+  is_active: boolean;
 }
 
 // export type LanguageOption = {

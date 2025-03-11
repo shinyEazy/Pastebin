@@ -5,12 +5,12 @@ const usePaste = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createPaste = async (content: string, expireAt?: string) => {
+  const createPaste = async (content: string, expiration: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await savePaste(content, expireAt);
+      const response = await savePaste(content, expiration);
       return response.id;
     } catch (err) {
       setError("Failed to save paste. Please try again.");
