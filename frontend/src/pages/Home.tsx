@@ -9,7 +9,7 @@ const Home = () => {
         onClick={() => navigate("/create")}
         style={{ cursor: "pointer" }}
       >
-        Create New Paste
+        New Paste
       </button>
     </div>
   );
