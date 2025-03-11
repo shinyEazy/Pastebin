@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -18,20 +19,20 @@ const Header = () => {
               </span>
             </div>
             <nav className="ml-6 flex items-center space-x-4">
-              <a
+              <Typography
                 className={`px-3 py-2 rounded-md text-sm font-medium ${"text-gray-700 hover:bg-gray-100"}`}
                 onClick={() => navigate("/")}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", fontFamily: "monospace" }}
               >
                 Home
-              </a>
-              <a
+              </Typography>
+              <Typography
                 className={`px-3 py-2 rounded-md text-sm font-medium ${"text-gray-700 hover:bg-gray-100"}`}
                 onClick={() => navigate("/create")}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", fontFamily: "monospace" }}
               >
                 New Paste
-              </a>
+              </Typography>
             </nav>
           </div>
         </div>
