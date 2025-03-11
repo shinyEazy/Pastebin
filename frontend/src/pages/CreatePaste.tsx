@@ -22,15 +22,14 @@ const CreatePaste = () => {
   const navigate = useNavigate();
   const { createPaste, loading } = usePaste();
   const [content, setContent] = useState("");
-  const [expiration, setExpiration] = useState<string | "">("Never");
+  const [expiration, setExpiration] = useState("Never");
 
   const handleSubmit = async () => {
+    if (!content.trim()) {
+      alert("Content cannot be empty!");
+      return;
+    }
     try {
-      if (!content.trim()) {
-        alert("Content cannot be empty!");
-        return;
-      }
-
       const id = await createPaste(content, expiration);
       navigate(`/paste/${id}`);
     } catch (error) {
@@ -39,24 +38,41 @@ const CreatePaste = () => {
   };
 
   return (
-    <div className="create-paste-page" style={{ height: "500px" }}>
-      <h2>New Paste</h2>
-      <PasteEditor content={content} onChange={setContent} />
+    <div
+      className={`p-6 rounded-lg shadow-md col-span-1 md:col-span-2 ${"bg-white"}`}
+    >
+      <h2 className="text-xl font-semibold mb-4">New Paste</h2>
 
-      <label>Paste Expiration:</label>
-      <select
-        value={expiration}
-        onChange={(e) => setExpiration(e.target.value)}
-      >
-        {EXPIRATION_OPTIONS.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-      <div className="action-bar" style={{ marginTop: "8px" }}>
-        <Button onClick={handleSubmit} loading={loading}>
-          Create New Paste
+      <div className={`border rounded-md overflow-hidden ${"border-gray-200"}`}>
+        <PasteEditor content={content} onChange={setContent} />
+      </div>
+
+      <div className="mt-4 flex justify-between items-center">
+        <div>
+          <label
+            className={`block text-sm font-medium ${"text-gray-700"} mb-1`}
+          >
+            Expiration
+          </label>
+          <select
+            value={expiration}
+            onChange={(e) => setExpiration(e.target.value)}
+            className={`rounded-md shadow-sm py-2 px-3 ${"bg-white border-gray-300 text-gray-900"} focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200`}
+          >
+            {EXPIRATION_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <Button
+          onClick={handleSubmit}
+          loading={loading}
+          className={`px-4 py-2 rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${""} transition-colors duration-200`}
+        >
+          Create Paste
         </Button>
       </div>
     </div>
