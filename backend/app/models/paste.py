@@ -4,7 +4,7 @@ from app.database import Base
 import pytz
 
 local_tz = pytz.timezone("Asia/Bangkok")  
-
+        
 class Paste(Base):
     __tablename__ = "pastes"
     
@@ -12,3 +12,4 @@ class Paste(Base):
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.now(local_tz))
     expire_at = Column(DateTime, nullable=True)
+    views = Column(Integer, default=0)

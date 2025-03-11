@@ -1,14 +1,12 @@
 from fastapi import FastAPI
 from app.routes import pastes
-from app.database import Base, engine  # Corrected imports
+from app.database import Base, engine  
 from fastapi.middleware.cors import CORSMiddleware
 
-# Create tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# CORS Configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],

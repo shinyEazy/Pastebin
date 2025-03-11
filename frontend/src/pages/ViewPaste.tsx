@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { getPaste } from "../services/pasteService";
 import type { Paste } from "../types/paste.types";
@@ -6,8 +6,12 @@ import type { Paste } from "../types/paste.types";
 const ViewPaste = () => {
   const { pasteId } = useLoaderData() as { pasteId: string };
   const [paste, setPaste] = useState<Paste | null>(null);
+  const didFetch = useRef(false);
 
   useEffect(() => {
+    if (didFetch.current) return;
+    didFetch.current = true;
+
     const loadPaste = async () => {
       try {
         const pasteData = await getPaste(pasteId);
@@ -18,6 +22,7 @@ const ViewPaste = () => {
           content: pasteData.content,
           created_at: createdAt,
           expire_at: pasteData.expire_at,
+          views: pasteData.views,
         });
       } catch (error) {
         console.error("Failed to load paste:", error);
@@ -45,6 +50,9 @@ const ViewPaste = () => {
             hour12: false,
           })}
         </span>
+      </div>
+      <div className="paste-meta">
+        <span>Views: {paste.views}</span>
       </div>
     </div>
   );

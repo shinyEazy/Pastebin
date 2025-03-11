@@ -15,5 +15,10 @@ def get_paste(db: Session, paste_id: int):
         db.delete(paste)
         db.commit()
         return None
+    
+    if paste:
+        paste.views += 1
+        db.commit()
+        db.refresh(paste)
 
     return paste

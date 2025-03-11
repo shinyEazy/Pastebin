@@ -7,6 +7,7 @@ export interface PasteResponse {
   content: string;
   created_at: string;
   expire_at?: string;
+  views: number;
 }
 
 export const savePaste = async (content: string, expireAt?: string) => {

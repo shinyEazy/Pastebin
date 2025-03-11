@@ -10,6 +10,7 @@ class Paste(BaseModel):
     content: str
     created_at: datetime
     expire_at: datetime | None
+    views: int
 
     class Config:
         orm_mode = True

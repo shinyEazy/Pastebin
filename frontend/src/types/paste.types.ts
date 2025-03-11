@@ -3,6 +3,7 @@ export interface Paste {
   content: string;
   created_at: Date;
   expire_at?: string;
+  views: number;
 }
 
 // export type LanguageOption = {
