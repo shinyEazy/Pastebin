@@ -4,10 +4,11 @@ from pydantic import BaseModel
 class PasteCreate(BaseModel):
     content: str
     expiration: str
-
+    language: str
 class Paste(BaseModel):
     id: int
     content: str
+    language: str
     created_at: datetime
     expiration: str 
     views: int

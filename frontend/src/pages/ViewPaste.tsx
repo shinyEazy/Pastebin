@@ -22,6 +22,7 @@ const ViewPaste = () => {
         setPaste({
           id: pasteData.id,
           content: pasteData.content,
+          language: pasteData.language,
           created_at: createdAt,
           expiration: pasteData.expiration,
           views: pasteData.views,
@@ -72,6 +73,7 @@ const ViewPaste = () => {
         style={{ display: "flex", flexDirection: "column" }}
       >
         <div>Created: {paste?.created_at.toLocaleString()}</div>
+        <div style={{ margin: 0 }}>Language: {paste?.language}</div>
         <div style={{ margin: 0 }}>Views: {paste?.views}</div>
         <div style={{ margin: 0 }}>Expires: {paste?.expiration}</div>
       </div>
