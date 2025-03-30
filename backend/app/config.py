@@ -5,7 +5,8 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_USER: str
     DB_PASSWORD: str
-
+    DB_PORT: int = 3306
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
