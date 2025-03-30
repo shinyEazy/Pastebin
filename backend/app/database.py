@@ -2,10 +2,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.config import settings 
+import os
 
 SQLALCHEMY_DATABASE_URL = (
     f"mysql+pymysql://{settings.DB_USER}:{settings.DB_PASSWORD}"
-    f"@{settings.DB_HOST}/{settings.DB_NAME}"
+    f"@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 )
 
 def get_db():

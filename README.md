@@ -12,15 +12,13 @@ npm start
 
 ```sh
 cd backend
-pip install -r requirements.txt
-python create_db.py
-uvicorn app.main:app --reload --port 3001
+docker-compose up --build
 ```
 
 ### Run Load Test
 
 ```sh
 cd backend
-uvicorn app.main:app --host 0.0.0.0 --port 3001 --workers 4
-locust -f backend/load_test/locustfile.py --host http://localhost:3001
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+locust -f backend/load_test/locustfile.py --host http://localhost:8000
 ```
