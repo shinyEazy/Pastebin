@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const ViewPaste = () => {
   const { pasteId } = useLoaderData() as { pasteId: string };
   const [paste, setPaste] = useState<Paste | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const didFetch = useRef(false);
   const navigate = useNavigate();
 
@@ -22,6 +23,7 @@ const ViewPaste = () => {
         setPaste({
           id: pasteData.id,
           content: pasteData.content,
+          language: pasteData.language,
           created_at: createdAt,
           expiration: pasteData.expiration,
           views: pasteData.views,
@@ -29,11 +31,23 @@ const ViewPaste = () => {
         });
       } catch (error) {
         console.error("Failed to load paste:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadPaste();
   }, [pasteId]);
+
+  if (isLoading) {
+    return (
+      <div
+        className={`p-6 rounded-lg shadow-md col-span-1 md:col-span-2 ${"bg-white"}`}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   if (!paste)
     return (
@@ -51,29 +65,30 @@ const ViewPaste = () => {
     >
       <div className="flex justify-between items-center mb-4">
         <button
-          className={`px-3 py-1 text-sm rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${""} transition-colors duration-200`}
+          className={`px-3 py-1 text-sm rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200`}
           onClick={() => navigate("/create")}
           style={{ cursor: "pointer" }}
         >
           New Paste
         </button>
       </div>
-      <div
-        className={`rounded-md overflow-hidden ${"bg-gray-50"} shadow-inner`}
-      >
+      <div className={`rounded-md overflow-hidden bg-gray-50 shadow-inner`}>
         <pre
-          className={`p-4 font-mono text-sm whitespace-pre-wrap ${"text-gray-800"}`}
+          className={`p-4 font-mono text-sm whitespace-pre-wrap text-gray-800`}
         >
           {paste.content}
         </pre>
       </div>
       <div
-        className={`mt-4 flex space-x-4 ${"text-gray-500"} text-sm`}
+        className={`mt-4 flex space-x-4 text-gray-500 text-sm`}
         style={{ display: "flex", flexDirection: "column" }}
       >
-        <div>Created: {paste?.created_at.toLocaleString()}</div>
-        <div style={{ margin: 0 }}>Views: {paste?.views}</div>
-        <div style={{ margin: 0 }}>Expires: {paste?.expiration}</div>
+        <div style={{ margin: 0 }}>
+          Created: {paste.created_at.toLocaleString()}
+        </div>
+        <div style={{ margin: 0 }}>Language: {paste.language}</div>
+        <div style={{ margin: 0 }}>Views: {paste.views}</div>
+        <div style={{ margin: 0 }}>Expires: {paste.expiration}</div>
       </div>
     </div>
   );

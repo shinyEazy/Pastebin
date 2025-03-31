@@ -4,6 +4,15 @@ import PasteEditor from "../components/PasteEditor/Editor";
 import usePaste from "../hooks/usePaste";
 import Button from "../components/common/Button";
 
+const LANGUAGE_OPTIONS = [
+  "Plaintext",
+  "Python",
+  "JavaScript",
+  "HTML",
+  "CSS",
+  "SQL",
+];
+
 const EXPIRATION_OPTIONS = [
   "Never",
   "Burn After Read",
@@ -23,6 +32,7 @@ const CreatePaste = () => {
   const { createPaste, loading } = usePaste();
   const [content, setContent] = useState("");
   const [expiration, setExpiration] = useState("Never");
+  const [language, setLanguage] = useState("plaintext");
 
   const handleSubmit = async () => {
     if (!content.trim()) {
@@ -30,7 +40,7 @@ const CreatePaste = () => {
       return;
     }
     try {
-      const id = await createPaste(content, expiration);
+      const id = await createPaste(content, expiration, language);
       navigate(`/paste/${id}`);
     } catch (error) {
       console.error("Failed to create paste:", error);
@@ -52,12 +62,31 @@ const CreatePaste = () => {
           <label
             className={`block text-sm font-medium ${"text-gray-700"} mb-1`}
           >
+            Language:
+          </label>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="rounded-md shadow-sm py-2 px-3 bg-white border border-gray-400 text-gray-900 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+          >
+            {LANGUAGE_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label
+            className={`block text-sm font-medium ${"text-gray-700"} mb-1`}
+          >
             Paste Expiration:
           </label>
           <select
             value={expiration}
             onChange={(e) => setExpiration(e.target.value)}
-            className={`rounded-md shadow-sm py-2 px-3 ${"bg-white border-gray-300 text-gray-900"} focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200`}
+            className="rounded-md shadow-sm py-2 px-3 bg-white border border-gray-400 text-gray-900 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
           >
             {EXPIRATION_OPTIONS.map((option) => (
               <option key={option} value={option}>
