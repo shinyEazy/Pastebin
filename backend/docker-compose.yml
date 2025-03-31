@@ -1,6 +1,6 @@
 services:
   backend:
-    container_name: backend
+    container_name: backend_pastebin
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,11 +10,12 @@ services:
       - .env
     depends_on:
       - db
+      - redis
     networks:
       - backend_network
 
   db:
-    container_name: db
+    container_name: db_pastebin
     image: mysql:8.0
     environment:
       MYSQL_DATABASE: ${DB_NAME}
@@ -23,6 +24,14 @@ services:
       - "13306:3306"
     volumes:
       - ./db_data:/var/lib/mysql
+    networks:
+      - backend_network
+
+  redis:
+    container_name: redis_pastebin
+    image: redis:latest
+    ports:
+      - "6379:6379"
     networks:
       - backend_network
 

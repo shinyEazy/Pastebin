@@ -5,6 +5,7 @@ class PasteCreate(BaseModel):
     content: str
     expiration: str
     language: str
+
 class Paste(BaseModel):
     id: int
     content: str
@@ -16,3 +17,4 @@ class Paste(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True

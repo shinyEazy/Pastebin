@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASSWORD: str
     DB_PORT: int = 3306
+    REDIS_HOST: str
+    REDIS_PORT: int = 6379
     
     class Config:
         env_file = ".env"
