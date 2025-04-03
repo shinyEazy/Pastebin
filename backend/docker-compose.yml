@@ -1,11 +1,15 @@
 services:
-  backend:
-    container_name: backend_pastebin
+  paste_service:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: paste_service/Dockerfile
     ports:
       - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./paste_service/app:/app/app
+      - ./shared:/app/shared
     env_file:
       - .env
     depends_on:
@@ -14,8 +18,40 @@ services:
     networks:
       - backend_network
 
+  analytics_service:
+    build:
+      context: .
+      dockerfile: analytics_service/Dockerfile
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./analytics_service/app:/app/app
+      - ./shared:/app/shared
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - backend_network
+
+  cleanup_service:
+    build:
+      context: .
+      dockerfile: cleanup_service/Dockerfile
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./cleanup_service/app:/app/app
+      - ./shared:/app/shareds
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - backend_network
+
   db:
-    container_name: db_pastebin
     image: mysql:8.0
     environment:
       MYSQL_DATABASE: ${DB_NAME}
@@ -23,12 +59,11 @@ services:
     ports:
       - "13306:3306"
     volumes:
-      - ./db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
     networks:
       - backend_network
 
   redis:
-    container_name: redis_pastebin
     image: redis:latest
     ports:
       - "6379:6379"

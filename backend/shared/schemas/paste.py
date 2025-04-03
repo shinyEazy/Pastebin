@@ -1,5 +1,5 @@
-from datetime import datetime
 from pydantic import BaseModel
+from datetime import datetime
 
 class PasteCreate(BaseModel):
     content: str
@@ -11,7 +11,7 @@ class Paste(BaseModel):
     content: str
     language: str
     created_at: datetime
-    expiration: str 
+    expiration: str
     views: int
     is_active: bool
 

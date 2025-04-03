@@ -1,13 +1,12 @@
-from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean
-from app.database import Base  
+from shared.database import Base
+from datetime import datetime
 import pytz
 
-local_tz = pytz.timezone("Asia/Bangkok")  
-        
+local_tz = pytz.timezone("Asia/Bangkok")
+
 class Paste(Base):
     __tablename__ = "pastes"
-    
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
     language = Column(String(50), default="plaintext")

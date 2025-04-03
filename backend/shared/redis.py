@@ -1,5 +1,5 @@
 from redis import Redis
-from app.config import settings
+from shared.config import settings
 
 def get_redis():
     redis_client = Redis(

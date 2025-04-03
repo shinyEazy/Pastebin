@@ -1,16 +1,11 @@
 from fastapi import FastAPI
-from app.routes import pastes
-from app.database import Base, engine  
+from shared.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
-from app.background import start_scheduler
+from app.routes import pastes
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-@app.on_event("startup")
-def on_startup():
-    start_scheduler()
 
 app.add_middleware(
     CORSMiddleware,
