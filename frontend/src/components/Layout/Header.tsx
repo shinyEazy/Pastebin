@@ -10,11 +10,7 @@ const Header = () => {
   const [showDiv, setShowDiv] = useState(false);
 
   return (
-    <header
-      className={`sticky top-0 z-10 bg-white shadow-sm ${
-        showDiv ? "blur-sm pointer-events-none" : ""
-      }`}
-    >
+    <header className={`sticky top-0 z-10 bg-white shadow-sm `}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -42,25 +38,23 @@ const Header = () => {
               >
                 New Paste
               </Typography>
-            </nav>
-            <div className="ml-6 flex items-center space-x-4">
-              <Button
-                variant="contained"
-                className="p-4 m-2"
-                onClick={() => setShowDiv(!showDiv)}
-              >
-                Login
-              </Button>
+              <div className="ml-6 flex items-center space-x-4">
+                <Button
+                  variant="contained"
+                  className="p-4 m-2"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </Button>
 
-              <Button variant="outlined" className="p-4 m-2">
-                Register
-              </Button>
-            </div>
+                <Button variant="outlined" className="p-4 m-2">
+                  Register
+                </Button>
+              </div>
+            </nav>
           </div>
         </div>
       </div>
-
-      {showDiv && <Login />}
     </header>
   );
 };
