@@ -1,11 +1,20 @@
 import { Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import React from "react";
+import { useState } from "react";
+import Login from "../../pages/Login";
 
 const Header = () => {
   const navigate = useNavigate();
+  const [showDiv, setShowDiv] = useState(false);
 
   return (
-    <header className={`sticky top-0 z-10 ${"bg-white"} shadow-sm`}>
+    <header
+      className={`sticky top-0 z-10 bg-white shadow-sm ${
+        showDiv ? "blur-sm pointer-events-none" : ""
+      }`}
+    >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -34,9 +43,24 @@ const Header = () => {
                 New Paste
               </Typography>
             </nav>
+            <div className="ml-6 flex items-center space-x-4">
+              <Button
+                variant="contained"
+                className="p-4 m-2"
+                onClick={() => setShowDiv(!showDiv)}
+              >
+                Login
+              </Button>
+
+              <Button variant="outlined" className="p-4 m-2">
+                Register
+              </Button>
+            </div>
           </div>
         </div>
       </div>
+
+      {showDiv && <Login />}
     </header>
   );
 };

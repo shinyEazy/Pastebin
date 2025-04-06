@@ -7,6 +7,9 @@ services:
       - "8000:8000"
     environment:
       - PYTHONPATH=/app
+      - DB_HOST=db
+      - DB_PORT=3306
+
     volumes:
       - ./paste_service/app:/app/app
       - ./shared:/app/shared
@@ -43,7 +46,7 @@ services:
       - PYTHONPATH=/app
     volumes:
       - ./cleanup_service/app:/app/app
-      - ./shared:/app/shareds
+      - ./shared:/app/shared
     env_file:
       - .env
     depends_on:
