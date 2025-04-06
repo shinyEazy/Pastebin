@@ -47,7 +47,11 @@ const Header = () => {
                   Login
                 </Button>
 
-                <Button variant="outlined" className="p-4 m-2">
+                <Button
+                  variant="outlined"
+                  className="p-4 m-2"
+                  onClick={() => navigate("/register")}
+                >
                   Register
                 </Button>
               </div>
