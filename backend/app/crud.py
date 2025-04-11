@@ -14,7 +14,7 @@ def create_paste(db: Session, paste: schemas.PasteCreate, redis):
     redis.expire(paste_key, 10)
     return paste_schema
 
-def get_paste(db, paste_id: int, redis):
+def get_paste(db, paste_id: str, redis):
     paste_key = f"paste:{paste_id}"
     increment_key = f"paste:{paste_id}:views_increment"
     cached_paste = redis.get(paste_key)
