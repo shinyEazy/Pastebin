@@ -1,8 +1,35 @@
 services:
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik-pastebin
+    command:
+      - "--api.insecure=true"              # Bật dashboard (chỉ dùng cho dev)
+      - "--providers.docker=true"          # Kích hoạt provider Docker
+      - "--providers.docker.exposedbydefault=false"  # Chỉ định tuyến container có label traefik.enable=true
+      - "--entrypoints.web.address=:80"    # Định nghĩa entrypoint HTTP trên port 80
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+    networks:
+      - backend_network
+    restart: unless-stopped
+      
   paste_service:
     build:
       context: .
       dockerfile: paste_service/Dockerfile
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paste.rule=PathPrefix(`/pastes`) && (Method(`GET`) || Method(`POST`))"
+      - "traefik.http.services.paste.loadbalancer.server.port=8000"  # Port của FastAPI
+      - "traefik.http.routers.paste.entrypoints=web"
     ports:
       - "8000:8000"
     environment:
@@ -22,6 +49,13 @@ services:
     build:
       context: .
       dockerfile: analytics_service/Dockerfile
+    deploy:
+      replicas: 2
+    labels:
+      - "traefik.enable=true" 
+      - "traefik.http.routers.analytics.rule=PathPrefix(`/analytics`)"  # Định tuyến /analytics
+      - "traefik.http.services.analytics.loadbalancer.server.port=8000"  # Port của FastAPI
+      - "traefik.http.routers.analytics.entrypoints=web"
     environment:
       - PYTHONPATH=/app
     volumes:
@@ -39,6 +73,13 @@ services:
     build:
       context: .
       dockerfile: cleanup_service/Dockerfile
+    deploy:
+      replicas: 2 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cleanup.rule=PathPrefix(`/cleanup`)"  # Định tuyến /cleanup
+      - "traefik.http.services.cleanup.loadbalancer.server.port=8000"  # Port của FastAPI
+      - "traefik.http.routers.cleanup.entrypoints=web"
     environment:
       - PYTHONPATH=/app
     volumes:
