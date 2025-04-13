@@ -3,8 +3,8 @@ import App from "./App";
 import Home from "./pages/Home";
 import CreatePaste from "./pages/CreatePaste";
 import ViewPaste from "./pages/ViewPaste";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
 
 const router = createBrowserRouter([
   {

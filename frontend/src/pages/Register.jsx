@@ -1,36 +1,33 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Login = () => {
+function Register() {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // Lưu thông báo lỗi nếu có
 
-  const handleLogin = async (e: { preventDefault: () => void }) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          username,
-          password,
-        }
-      );
-      localStorage.setItem("token", response.data.token);
-      navigate("/"); // Chuyển hướng về trang chính
+      await axios.post("http://localhost:5001/api/register", {
+        username,
+        password,
+      });
+      alert("Đăng ký thành công!");
+      navigate("/login");
     } catch (err) {
-      setError((err as any).response?.data?.message || "Login failed");
+      alert("Tên đăng nhập đã tồn tại");
     }
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold text-center mb-4">Login</h2>
+      <h2 className="text-2xl font-semibold text-center mb-4">Register</h2>
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleRegister}>
         <div className="mb-4">
           <label
             htmlFor="username"
@@ -47,6 +44,23 @@ const Login = () => {
             className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+
+        {/* <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Email:
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div> */}
 
         <div className="mb-6">
           <label
@@ -69,18 +83,18 @@ const Login = () => {
           type="submit"
           className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          Login
+          Register
         </button>
       </form>
 
       <p className="mt-4 text-center text-sm">
-        Don't have an account?{" "}
-        <a href="/register" className="text-blue-500 hover:underline">
-          Register
+        Already have an account?{" "}
+        <a href="/login" className="text-blue-500 hover:underline">
+          Login
         </a>
       </p>
     </div>
   );
-};
+}
 
-export default Login;
+export default Register;

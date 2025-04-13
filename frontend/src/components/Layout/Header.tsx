@@ -3,7 +3,6 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useState } from "react";
-import Login from "../../pages/Login";
 
 const Header = () => {
   const navigate = useNavigate();
