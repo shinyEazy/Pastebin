@@ -1,12 +1,30 @@
 import { Typography } from "@mui/material";
-import { Button } from "@mui/material";
+import { Button, Avatar, Menu, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
+import { UserContext } from "src/users/userContext";
 
 const Header = () => {
   const navigate = useNavigate();
-  const [showDiv, setShowDiv] = useState(false);
+  const { user, logout } = useContext(UserContext);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // const handleAvatarClick = (event: {
+  //   currentTarget: React.SetStateAction<null>;
+  // }) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
+
+  // const handleClose = () => {
+  //   setAnchorEl(null);
+  // };
+
+  // const handleLogout = () => {
+  //   logout(); // Gọi hàm logout từ context
+  //   handleClose();
+  //   navigate("/");
+  // };
 
   return (
     <header className={`sticky top-0 z-10 bg-white shadow-sm `}>
@@ -38,21 +56,41 @@ const Header = () => {
                 New Paste
               </Typography>
               <div className="ml-6 flex items-center space-x-4">
-                <Button
-                  variant="contained"
-                  className="p-4 m-2"
-                  onClick={() => navigate("/login")}
-                >
-                  Login
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  className="p-4 m-2"
-                  onClick={() => navigate("/register")}
-                >
-                  Register
-                </Button>
+                {user ? (
+                  <>
+                    <Typography style={{ fontFamily: "monospace" }}>
+                      {user.username}
+                    </Typography>
+                    <Avatar
+                      //onClick={handleAvatarClick}
+                      style={{ cursor: "pointer" }}
+                    />
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      //onClose={handleClose}
+                    >
+                      {/* <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem> */}
+                    </Menu>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="contained"
+                      className="p-4 m-2"
+                      onClick={() => navigate("/login")}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      className="p-4 m-2"
+                      onClick={() => navigate("/register")}
+                    >
+                      Register
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

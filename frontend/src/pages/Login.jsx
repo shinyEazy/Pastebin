@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "src/users/userContext.jsx";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
+  const { setUser } = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,6 +19,8 @@ const Login = () => {
         password,
       });
       localStorage.setItem("token", res.data.token);
+      const decoded = jwtDecode(res.data.token);
+      setUser({ username: decoded.username }); // tùy payload
       navigate("/");
     } catch (err) {
       alert("Sai thông tin đăng nhập");
