@@ -14,3 +14,4 @@ class Paste(Base):
     expiration = Column(String(50), default="Never")
     views = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
+    user_id = Column(Integer, nullable=True)

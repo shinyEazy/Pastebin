@@ -18,9 +18,14 @@ const Login = () => {
         username,
         password,
       });
-      localStorage.setItem("token", res.data.token);
+
+      const token = res.data.token;
+      console.log("Sending token:", token);
+
+      if (!token) throw new Error("No token received");
+      localStorage.setItem("token", token);
       const decoded = jwtDecode(res.data.token);
-      setUser({ username: decoded.username }); // tùy payload
+      setUser({ username: decoded.username });
       navigate("/");
     } catch (err) {
       alert("Sai thông tin đăng nhập");

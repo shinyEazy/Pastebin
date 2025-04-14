@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const SECRET = "secret-key"; // hoặc từ biến môi trường
+const SECRET = "secret"; // hoặc từ biến môi trường
 
 // Đăng ký
 app.post("/api/register", async (req, res) => {

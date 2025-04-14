@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Box, Popover, Typography, Link } from "@mui/material";
 import { Button, Avatar, Menu, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import React, { useContext } from "react";
@@ -8,23 +8,43 @@ import { UserContext } from "src/users/userContext";
 const Header = () => {
   const navigate = useNavigate();
   const { user, logout } = useContext(UserContext);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+  const [anchorHistory, setAnchorHistory] = useState<HTMLLIElement | null>(
+    null
+  );
+  const [openHistoryPopover, setOpenHistoryPopover] = useState(false);
 
-  // const handleAvatarClick = (event: {
-  //   currentTarget: React.SetStateAction<null>;
-  // }) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  const handleAvatarClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-  // const handleLogout = () => {
-  //   logout(); // Gọi hàm logout từ context
-  //   handleClose();
-  //   navigate("/");
-  // };
+  const handleLogout = () => {
+    logout();
+    handleClose();
+    navigate("/");
+  };
+
+  function handleHistory(
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>
+  ): void {
+    setAnchorHistory(event.currentTarget);
+    setOpenHistoryPopover(true);
+  }
+
+  const handleCloseHistoryPopover = () => {
+    setAnchorHistory(null);
+    setOpenHistoryPopover(false);
+  };
+
+  const historyLinks = [
+    { id: 1, url: "https://example.com/page1", title: "Trang 1" },
+    { id: 2, url: "https://anothersite.net/article", title: "Bài viết 2" },
+    { id: 3, url: "https://myblog.org/post", title: "Bài đăng 3" },
+  ];
 
   return (
     <header className={`sticky top-0 z-10 bg-white shadow-sm `}>
@@ -62,16 +82,49 @@ const Header = () => {
                       {user.username}
                     </Typography>
                     <Avatar
-                      //onClick={handleAvatarClick}
+                      component="div"
+                      onClick={handleAvatarClick}
                       style={{ cursor: "pointer" }}
                     />
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
-                      //onClose={handleClose}
+                      onClose={handleClose}
                     >
-                      {/* <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem> */}
+                      <MenuItem onClick={handleLogout}>Log out</MenuItem>
+                      <MenuItem onClick={handleHistory}>History Paste</MenuItem>
                     </Menu>
+                    <Popover
+                      open={openHistoryPopover}
+                      anchorEl={anchorHistory}
+                      onClose={handleCloseHistoryPopover}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                      transformOrigin={{
+                        vertical: "top",
+                        horizontal: "left",
+                      }}
+                    >
+                      <Box sx={{ p: 2 }}>
+                        <Typography variant="subtitle1">
+                          Lịch sử đã dán:
+                        </Typography>
+                        {historyLinks.map((link) => (
+                          <div key={link.id} style={{ marginBottom: "8px" }}>
+                            <Link
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {link.title}
+                            </Link>
+                          </div>
+                        ))}
+                      </Box>
+                      dcm Popover content here
+                    </Popover>
                   </>
                 ) : (
                   <>

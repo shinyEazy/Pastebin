@@ -4,8 +4,8 @@ from shared.utils import is_expired
 from shared.schemas import paste
 import json
 
-def create_paste(db: Session, paste_data: paste.PasteCreate, redis):
-    db_paste = Paste(**paste_data.dict())
+def create_paste(db: Session, paste_data: paste.PasteCreate, redis, user_id: int):
+    db_paste = Paste(**paste_data.dict(), user_id=user_id)
     db.add(db_paste)
     db.commit()
     db.refresh(db_paste)

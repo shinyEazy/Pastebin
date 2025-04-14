@@ -3,7 +3,6 @@ from shared.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import pastes
 
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
