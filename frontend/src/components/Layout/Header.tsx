@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import React, { useContext } from "react";
 import { useState } from "react";
 import { UserContext } from "src/users/userContext";
+import HistoryDropdown from "./HistoryDropdown";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -39,12 +40,6 @@ const Header = () => {
     setAnchorHistory(null);
     setOpenHistoryPopover(false);
   };
-
-  const historyLinks = [
-    { id: 1, url: "https://example.com/page1", title: "Trang 1" },
-    { id: 2, url: "https://anothersite.net/article", title: "Bài viết 2" },
-    { id: 3, url: "https://myblog.org/post", title: "Bài đăng 3" },
-  ];
 
   return (
     <header className={`sticky top-0 z-10 bg-white shadow-sm `}>
@@ -92,39 +87,8 @@ const Header = () => {
                       onClose={handleClose}
                     >
                       <MenuItem onClick={handleLogout}>Log out</MenuItem>
-                      <MenuItem onClick={handleHistory}>History Paste</MenuItem>
                     </Menu>
-                    <Popover
-                      open={openHistoryPopover}
-                      anchorEl={anchorHistory}
-                      onClose={handleCloseHistoryPopover}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left",
-                      }}
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "left",
-                      }}
-                    >
-                      <Box sx={{ p: 2 }}>
-                        <Typography variant="subtitle1">
-                          Lịch sử đã dán:
-                        </Typography>
-                        {historyLinks.map((link) => (
-                          <div key={link.id} style={{ marginBottom: "8px" }}>
-                            <Link
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {link.title}
-                            </Link>
-                          </div>
-                        ))}
-                      </Box>
-                      dcm Popover content here
-                    </Popover>
+                    <HistoryDropdown />
                   </>
                 ) : (
                   <>

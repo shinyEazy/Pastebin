@@ -5,6 +5,7 @@ class PasteCreate(BaseModel):
     content: str
     expiration: str
     language: str
+    
      
 
 class Paste(BaseModel):
@@ -15,6 +16,9 @@ class Paste(BaseModel):
     expiration: str
     views: int
     is_active: bool
+    # user_id: int
+
+
     
    
 
