@@ -72,4 +72,4 @@ const authMiddleware = (req, res, next) => {
 //   res.json({ message: `Xin chào ${req.user.username}` });
 // });
 
-app.listen(5001, () => console.log("🟢 Backend chạy ở http://localhost:3001"));
+app.listen(5001, () => console.log("🟢 Backend chạy ở http://localhost:5001"));

@@ -38,6 +38,27 @@ services:
     networks:
       - backend_network
 
+  login_service:
+    build:
+      context: ./login_service # Thư mục chứa Dockerfile và package.json
+      dockerfile: Dockerfile # Không cần ghi rõ nếu tên là Dockerfile
+    # volumes:
+    #   - ./login_service:/app # Khớp với WORKDIR trong Dockerfile
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT}
+    depends_on:
+      - db
+    networks:
+      - backend_network
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+
   cleanup_service:
     build:
       context: .
