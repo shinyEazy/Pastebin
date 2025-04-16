@@ -1,35 +1,35 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     try {
       const response = await axios.post("http://localhost:8001/auth/login", {
         username,
         password,
       });
       localStorage.setItem("token", response.data.access_token);
-      alert("Đăng nhập thành công!");
-      navigate("/");
+      navigate("/", { replace: true });
+      window.location.reload();
     } catch (err: any) {
-      setError(
-        err.response?.data?.detail || "Đăng nhập thất bại. Vui lòng thử lại."
+      toast.error(
+        err.response?.data?.detail || "Login failed. Please try again."
       );
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+      <ToastContainer />
       <h2 className="text-2xl font-semibold text-center mb-4">Login</h2>
-      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
       <form onSubmit={handleLogin}>
         <div className="mb-4">

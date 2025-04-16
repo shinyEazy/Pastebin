@@ -5,28 +5,34 @@ import axios from "axios";
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("Password and confirm password do not match");
+      return;
+    }
+
     try {
       await axios.post("http://localhost:8001/auth/register", {
         username,
         password,
       });
-      alert("Đăng ký thành công!");
-      navigate("/login");
+      navigate("/login", { replace: true });
     } catch (err: any) {
       setError(
-        err.response?.data?.detail || "Đăng ký thất bại. Vui lòng thử lại."
+        err.response?.data?.detail || "Register failed. Please try again."
       );
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
       <h2 className="text-2xl font-semibold text-center mb-4">Register</h2>
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
@@ -48,7 +54,7 @@ function Register() {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <label
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
@@ -60,6 +66,23 @@ function Register() {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Confirm Password:
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             required
             className="w-full p-3 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
