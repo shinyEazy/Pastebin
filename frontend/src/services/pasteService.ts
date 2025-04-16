@@ -18,11 +18,22 @@ export const savePaste = async (
   language: string
 ) => {
   try {
-    const response = await axios.post<PasteResponse>(`${API_BASE}/pastes`, {
-      content,
-      expiration,
-      language,
-    });
+    const headers: any = {};
+    const token = localStorage.getItem("token");
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    console.log("Headers being sent:", headers);
+
+    const response = await axios.post<PasteResponse>(
+      `${API_BASE}/pastes`,
+      {
+        content,
+        expiration,
+        language,
+      },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error("Failed to save paste:", error);

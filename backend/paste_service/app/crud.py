@@ -1,11 +1,13 @@
 from sqlalchemy.orm import Session
 from shared.models.paste import Paste
+
 from shared.utils import is_expired
 from shared.schemas import paste
+
 import json
 
-def create_paste(db: Session, paste_data: paste.PasteCreate, redis):
-    db_paste = Paste(**paste_data.dict())
+def create_paste(db: Session, paste_data: paste.PasteCreate, redis, user_id: int):
+    db_paste = Paste(**paste_data.dict(), user_id=user_id)
     db.add(db_paste)
     db.commit()
     db.refresh(db_paste)
@@ -15,7 +17,11 @@ def create_paste(db: Session, paste_data: paste.PasteCreate, redis):
     redis.expire(paste_key, 10)
     return paste_schema
 
-def get_paste(db: Session, paste_id: int, redis):
+def get_pastes_by_user_id(db: Session, user_id: int):
+    pastes = db.query(Paste).filter(Paste.user_id == user_id, Paste.is_active == True).all()
+    return [f"http://localhost:8000/api/pastes/{paste.id}" for paste in pastes]
+
+def get_paste(db: Session, paste_id: str, redis):
     paste_key = f"paste:{paste_id}"
     increment_key = f"paste:{paste_id}:views_increment"
     cached_paste = redis.get(paste_key)
