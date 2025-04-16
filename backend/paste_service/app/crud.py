@@ -3,9 +3,13 @@ from shared.models.paste import Paste
 from shared.utils import is_expired
 from shared.schemas import paste
 import json
+from shared.models.user import User
 
-def create_paste(db: Session, paste_data: paste.PasteCreate, redis):
-    db_paste = Paste(**paste_data.dict())
+def create_paste(db: Session, paste_data: paste.PasteCreate, redis, current_user: User = None):
+    db_paste = Paste(
+        **paste_data.dict(),
+        user_id=current_user.id if current_user else None
+    )
     db.add(db_paste)
     db.commit()
     db.refresh(db_paste)

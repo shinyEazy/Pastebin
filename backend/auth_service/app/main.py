@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from shared.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import pastes
-from shared.models.user import User 
-from shared.models.paste import Paste 
+from shared.database import Base, engine
+from shared.models.user import User
+from shared.models.paste import Paste
+from app.routes import auth
 
 Base.metadata.create_all(bind=engine)
 
@@ -17,4 +17,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(pastes.router, prefix="/api")
+app.include_router(auth.router, prefix="/auth")

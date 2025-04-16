@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 from shared.database import Base
 from datetime import datetime
 import pytz
@@ -15,3 +16,5 @@ class Paste(Base):
     expiration = Column(String(50), default="Never")
     views = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
+    user_id = Column(String(36), ForeignKey("user.id"), nullable=True) 
+    user = relationship("User", back_populates="pastes")

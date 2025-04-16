@@ -9,15 +9,19 @@ const usePaste = () => {
     content: string,
     expiration: string,
     language: string
-  ) => {
+  ): Promise<string> => {
     setLoading(true);
     setError(null);
 
     try {
       const response = await savePaste(content, expiration, language);
+      console.log("usePaste received paste:", response);
       return response.id;
-    } catch (err) {
-      setError("Failed to save paste. Please try again.");
+    } catch (err: any) {
+      const errorMessage =
+        err.message || "Failed to save paste. Please try again.";
+      setError(errorMessage);
+      console.error("usePaste error:", errorMessage);
       throw err;
     } finally {
       setLoading(false);

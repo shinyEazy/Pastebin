@@ -1,5 +1,7 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from app.utils import cleanup_expired_pastes
+from shared.models.user import User
+from shared.models.paste import Paste 
 
 if __name__ == "__main__":
     scheduler = BlockingScheduler()

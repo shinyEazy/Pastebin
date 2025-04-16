@@ -51,6 +51,24 @@ services:
     networks:
       - backend_network
 
+  auth_service:
+    build:
+      context: .
+      dockerfile: auth_service/Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./auth_service/app:/app/app
+      - ./shared:/app/shared
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - backend_network
+
   db:
     image: mysql:8.0
     environment:
