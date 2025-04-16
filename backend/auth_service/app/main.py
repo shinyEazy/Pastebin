@@ -5,7 +5,7 @@ from shared.models.user import User
 from shared.models.paste import Paste
 from app.routes import auth
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 

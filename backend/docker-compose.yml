@@ -35,22 +35,6 @@ services:
     networks:
       - backend_network
 
-  cleanup_service:
-    build:
-      context: .
-      dockerfile: cleanup_service/Dockerfile
-    environment:
-      - PYTHONPATH=/app
-    volumes:
-      - ./cleanup_service/app:/app/app
-      - ./shared:/app/shared
-    env_file:
-      - .env
-    depends_on:
-      - db
-    networks:
-      - backend_network
-
   auth_service:
     build:
       context: .
