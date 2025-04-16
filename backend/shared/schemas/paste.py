@@ -9,7 +9,7 @@ class PasteCreate(BaseModel):
      
 
 class Paste(BaseModel):
-    id: int
+    id: str
     content: str
     language: str
     created_at: datetime

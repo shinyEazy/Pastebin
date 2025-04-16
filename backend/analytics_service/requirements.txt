@@ -18,4 +18,5 @@ sniffio==1.3.1
 SQLAlchemy==2.0.39
 starlette==0.46.1
 typing_extensions==4.12.2
+uuid6==2024.7.10
 uvicorn==0.34.0

@@ -21,8 +21,7 @@ def get_pastes_by_user_id(db: Session, user_id: int):
     pastes = db.query(Paste).filter(Paste.user_id == user_id, Paste.is_active == True).all()
     return [f"http://localhost:8000/api/pastes/{paste.id}" for paste in pastes]
 
-
-def get_paste(db: Session, paste_id: int, redis):
+def get_paste(db: Session, paste_id: str, redis):
     paste_key = f"paste:{paste_id}"
     increment_key = f"paste:{paste_id}:views_increment"
     cached_paste = redis.get(paste_key)
