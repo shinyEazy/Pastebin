@@ -5,6 +5,7 @@ import CreatePaste from "./pages/CreatePaste";
 import ViewPaste from "./pages/ViewPaste";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import MyPastes from "./pages/MyPastes";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "my-pastes",
+        element: <MyPastes />,
       },
       {
         path: "paste/:id",

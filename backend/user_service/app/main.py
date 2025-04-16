@@ -1,10 +1,6 @@
 from fastapi import FastAPI
-from shared.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import pastes
-from shared.models.user import User 
-
-Base.metadata.create_all(bind=engine)
+from .routes import user
 
 app = FastAPI()
 
@@ -16,4 +12,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(pastes.router, prefix="/api")
+app.include_router(user.router, prefix="/user")

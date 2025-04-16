@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8000/api";
+const USER_API_BASE =
+  process.env.REACT_APP_USER_API_BASE || "http://localhost:8002";
 
 export interface PasteResponse {
   id: string;
@@ -36,7 +38,6 @@ export const savePaste = async (
       },
       { headers }
     );
-    console.log("Paste created:", response.data);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -57,5 +58,36 @@ export const getPaste = async (id: string): Promise<PasteResponse> => {
       error.response?.data || error.message
     );
     throw new Error(error.response?.data?.detail || "Failed to get paste");
+  }
+};
+
+export const getUserPastes = async (): Promise<PasteResponse[]> => {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("Sending token for user pastes:", token);
+
+    if (!token) {
+      throw new Error("Not authenticated");
+    }
+
+    const response = await axios.get<PasteResponse[]>(
+      `${USER_API_BASE}/user/pastes`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Fetched user pastes:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      "Failed to fetch user pastes:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.detail || "Failed to fetch user pastes"
+    );
   }
 };

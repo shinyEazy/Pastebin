@@ -54,19 +54,26 @@ const Header = () => {
               >
                 New Paste
               </Typography>
+              {isAuthenticated && (
+                <Typography
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  onClick={() => navigate("/my-pastes")}
+                  style={{ cursor: "pointer", fontFamily: "monospace" }}
+                >
+                  My Pastes
+                </Typography>
+              )}
             </nav>
           </div>
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
-              <>
-                <Typography
-                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
-                  onClick={handleLogout}
-                  style={{ cursor: "pointer", fontFamily: "monospace" }}
-                >
-                  Logout
-                </Typography>
-              </>
+              <Typography
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+                onClick={handleLogout}
+                style={{ cursor: "pointer", fontFamily: "monospace" }}
+              >
+                Logout
+              </Typography>
             ) : (
               <>
                 <Typography

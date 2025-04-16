@@ -43,7 +43,7 @@ services:
       - PYTHONPATH=/app
     volumes:
       - ./cleanup_service/app:/app/app
-      - ./shared:/app/shareds
+      - ./shared:/app/shared
     env_file:
       - .env
     depends_on:
@@ -61,6 +61,24 @@ services:
       - PYTHONPATH=/app
     volumes:
       - ./auth_service/app:/app/app
+      - ./shared:/app/shared
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - backend_network
+
+  user_service:
+    build:
+      context: .
+      dockerfile: user_service/Dockerfile
+    ports:
+      - "8002:8000"
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./user_service/app:/app/app
       - ./shared:/app/shared
     env_file:
       - .env
