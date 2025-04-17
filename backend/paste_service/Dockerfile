@@ -12,8 +12,9 @@ RUN pip install -r requirements.txt --no-cache-dir
 COPY paste_service/app/ ./app
 COPY shared/ ./shared
 
-COPY entrypoint.sh /entrypoint.sh
+COPY paste_service/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 8000

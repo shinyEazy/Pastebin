@@ -6,7 +6,7 @@ from shared.database import get_db
 from shared.models.user import User
 from shared.config import settings
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="http://localhost:8001/auth/login", auto_error=False)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="http://localhost/auth/login", auto_error=False)
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     if not token:

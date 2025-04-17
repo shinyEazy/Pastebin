@@ -19,7 +19,7 @@ function Register() {
     }
 
     try {
-      await axios.post("http://localhost:8001/auth/register", {
+      await axios.post("http://localhost/auth/register", {
         username,
         password,
       });

@@ -9,7 +9,7 @@ from shared.models.user import User
 
 router = APIRouter()
 
-@router.post("/pastes/", response_model=paste.Paste)
+@router.post("/pastes", response_model=paste.Paste)
 def create_paste(
     paste: paste.PasteCreate,
     db: Session = Depends(get_db),

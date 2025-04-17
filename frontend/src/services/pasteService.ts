@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8000/api";
-const USER_API_BASE =
-  process.env.REACT_APP_USER_API_BASE || "http://localhost:8002";
+const API_BASE = "http://localhost";
 
 export interface PasteResponse {
   id: string;
@@ -19,7 +17,7 @@ export const savePaste = async (
   content: string,
   expiration: string,
   language: string
-): Promise<PasteResponse> => {
+) => {
   try {
     const token = localStorage.getItem("token");
     console.log("Sending token:", token);
@@ -29,8 +27,8 @@ export const savePaste = async (
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
-    const response = await axios.post<PasteResponse>(
-      `${API_BASE}/pastes`,
+    const response = await axios.post(
+      `${API_BASE}/paste/pastes`,
       {
         content,
         expiration,
@@ -48,9 +46,9 @@ export const savePaste = async (
   }
 };
 
-export const getPaste = async (id: string): Promise<PasteResponse> => {
+export const getPaste = async (id: string) => {
   try {
-    const response = await axios.get<PasteResponse>(`${API_BASE}/pastes/${id}`);
+    const response = await axios.get(`${API_BASE}/paste/pastes/${id}`);
     return response.data;
   } catch (error: any) {
     console.error(
@@ -61,24 +59,18 @@ export const getPaste = async (id: string): Promise<PasteResponse> => {
   }
 };
 
-export const getUserPastes = async (): Promise<PasteResponse[]> => {
+export const getUserPastes = async () => {
   try {
     const token = localStorage.getItem("token");
     console.log("Sending token for user pastes:", token);
-
     if (!token) {
       throw new Error("Not authenticated");
     }
-
-    const response = await axios.get<PasteResponse[]>(
-      `${USER_API_BASE}/user/pastes`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
+    const response = await axios.get(`${API_BASE}/user/pastes`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     console.log("Fetched user pastes:", response.data);
     return response.data;
   } catch (error: any) {
