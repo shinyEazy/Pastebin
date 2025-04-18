@@ -20,5 +20,5 @@ docker-compose up --build
 ```sh
 cd backend
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
-locust -f backend/load_test/locustfile.py --host http://localhost:8000
+locust -f loadtest/load_test/locustfile.py --host http://localhost:8000
 ```
