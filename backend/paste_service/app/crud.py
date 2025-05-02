@@ -16,7 +16,7 @@ def create_paste(db: Session, paste_data: paste.PasteCreate, redis, current_user
     paste_schema = paste.Paste.from_orm(db_paste)
     paste_key = f"paste:{db_paste.id}"
     redis.set(paste_key, paste_schema.json())
-    redis.expire(paste_key, 10)
+    redis.expire(paste_key, 900)
     return paste_schema
 
 def get_paste(db: Session, paste_id: str, redis):
