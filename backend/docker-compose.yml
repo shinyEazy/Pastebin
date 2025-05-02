@@ -1,21 +1,129 @@
 services:
-  backend:
-    container_name: backend_pastebin
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--log.level=DEBUG"
+      - "--accesslog=true"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - backend_network
+    labels:
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=http://localhost:3000"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=Content-Type,Authorization"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
+
+  paste_service:
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+      dockerfile: paste_service/Dockerfile
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./paste_service/app:/app/app
+      - ./shared:/app/shared
     env_file:
       - .env
     depends_on:
       - db
       - redis
+      - traefik
     networks:
       - backend_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paste.rule=PathPrefix(`/paste`)"
+      - "traefik.http.routers.paste.service=paste_service"
+      - "traefik.http.services.paste_service.loadbalancer.server.port=8000"
+      - "traefik.http.routers.paste.middlewares=strip-paste,cors"
+      - "traefik.http.middlewares.strip-paste.stripprefix.prefixes=/paste"
+
+  auth_service:
+    build:
+      context: .
+      dockerfile: auth_service/Dockerfile
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./auth_service/app:/app/app
+      - ./shared:/app/shared
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - traefik
+    networks:
+      - backend_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth.service=auth_service"
+      - "traefik.http.services.auth_service.loadbalancer.server.port=8000"
+      - "traefik.http.routers.auth.middlewares=strip-auth,cors"
+      - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=/auth"
+
+  user_service:
+    build:
+      context: .
+      dockerfile: user_service/Dockerfile
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./user_service/app:/app/app
+      - ./shared:/app/shared
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - traefik
+    networks:
+      - backend_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.user.rule=PathPrefix(`/user`)"
+      - "traefik.http.routers.user.service=user_service"
+      - "traefik.http.services.user_service.loadbalancer.server.port=8000"
+      - "traefik.http.routers.user.middlewares=strip-user,cors"
+      - "traefik.http.middlewares.strip-user.stripprefix.prefixes=/user"
+
+  analytics_service:
+    build:
+      context: .
+      dockerfile: analytics_service/Dockerfile
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./analytics_service/app:/app/app
+      - ./shared:/app/shared
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - traefik
+    networks:
+      - backend_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.analytics.rule=PathPrefix(`/analytics`)"
+      - "traefik.http.routers.analytics.service=analytics_service"
+      - "traefik.http.services.analytics_service.loadbalancer.server.port=8000"
+      - "traefik.http.routers.analytics.middlewares=strip-analytics,cors"
+      - "traefik.http.middlewares.strip-analytics.stripprefix.prefixes=/analytics"
 
   db:
-    container_name: db_pastebin
     image: mysql:8.0
     environment:
       MYSQL_DATABASE: ${DB_NAME}
@@ -23,12 +131,11 @@ services:
     ports:
       - "13306:3306"
     volumes:
-      - ./db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
     networks:
       - backend_network
 
   redis:
-    container_name: redis_pastebin
     image: redis:latest
     ports:
       - "6379:6379"
