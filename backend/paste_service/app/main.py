@@ -7,18 +7,43 @@ from app.utils import cleanup_expired_pastes
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from contextlib import asynccontextmanager
+import threading
+import time
+from typing import List
+import logging
+
+logging.basicConfig(level=logging.INFO, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+from app.crud import batch_worker, process_batch
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     scheduler = BackgroundScheduler()
+    
     scheduler.add_job(
         cleanup_expired_pastes,
-        trigger=IntervalTrigger(hours=1),
+        trigger=IntervalTrigger(hours=10),
         max_instances=1
     )
+    
+    scheduler.add_job(
+        process_batch,
+        trigger=IntervalTrigger(minutes=1),
+        max_instances=1
+    )
+    
     scheduler.start()
+    
+    logger.info("Application started with batch processing enabled")
+    
     yield
+    
+    logger.info("Shutting down application")
     scheduler.shutdown()
+    
+    process_batch()
 
 Base.metadata.create_all(bind=engine)
 
