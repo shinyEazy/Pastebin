@@ -1,58 +1,82 @@
-from sqlalchemy.orm import Session
+import redis
+from shared.config import settings
 import logging
 import time
-from shared.models.paste import Paste
 from apscheduler.triggers.interval import IntervalTrigger
+from shared.database import get_db
+from shared.models.paste import Paste
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, 
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def sync_paste_views(db: Session, redis):
+# Create a Redis connection pool
+redis_pool = redis.ConnectionPool(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB,
+    password=settings.REDIS_PASSWORD,
+    max_connections=100,  # Increase for high concurrency
+    socket_timeout=10,
+    socket_connect_timeout=10,
+    health_check_interval=30,
+    retry_on_timeout=True
+)
+
+def get_redis():
+    """Get a Redis connection from the pool"""
+    return redis.Redis(connection_pool=redis_pool)
+
+def sync_paste_views(db, redis):
     """
-    Synchronize paste view counts from Redis to the database in batch.
-    This should be called periodically to update the database.
+    Optimized function to sync paste view counts from Redis to database
     """
     start_time = time.time()
+
+    # Get all paste IDs that need syncing (using SSCAN instead of SMEMBERS for large sets)
+    all_paste_ids = []
+    cursor = 0
+    while True:
+        cursor, batch = redis.sscan("pastes_to_sync", cursor, count=1000)
+        all_paste_ids.extend(batch)
+        if cursor == 0:
+            break
     
-    # Get all paste IDs that need syncing
-    paste_ids = redis.smembers("pastes_to_sync")
-    if not paste_ids:
+    if not all_paste_ids:
         return
-    
+
+    paste_ids = [pid.decode('utf-8') if isinstance(pid, bytes) else pid for pid in all_paste_ids]
     logger.info(f"Syncing view counts for {len(paste_ids)} pastes")
+
+    # Process in batches of 1000
+    batch_size = 1000
     
-    # Process in batches of 500 to avoid memory issues with very large sets
-    batch_size = 500
-    paste_ids_list = list(paste_ids)
-    
-    for i in range(0, len(paste_ids_list), batch_size):
-        batch = paste_ids_list[i:i+batch_size]
-        
-        # Create a dictionary to hold updates
+    for i in range(0, len(paste_ids), batch_size):
+        batch = paste_ids[i:i+batch_size]
         updates = {}
         
-        # Process each paste in the batch
-        for paste_id in batch:
-            paste_id = paste_id.decode('utf-8') if isinstance(paste_id, bytes) else paste_id
-            increment_key = f"paste:{paste_id}:views_increment"
+        # Use Redis pipeline for batch operations
+        with redis.pipeline() as pipe:
+            for paste_id in batch:
+                increment_key = f"paste:{paste_id}:views_increment"
+                pipe.get(increment_key)
+                pipe.srem("pastes_to_sync", paste_id)
+                pipe.delete(increment_key)
             
-            # Get view increment and reset counter
-            increment = int(redis.get(increment_key) or 0)
-            if increment > 0:
-                updates[paste_id] = increment
-                redis.delete(increment_key)
-                redis.srem("pastes_to_sync", paste_id)
+            results = pipe.execute()
         
-        # Perform batch update if we have any updates
+        # Process results in groups of 3 (get, srem, delete)
+        for j in range(0, len(results), 3):
+            if j + 2 < len(results):
+                paste_id = batch[j // 3]
+                increment = int(results[j] or 0)
+                
+                if increment > 0:
+                    updates[paste_id] = increment
+        
+        # Optimize database update
         if updates:
             try:
-                # Use SQLAlchemy's bulk update capabilities
-                # This is more efficient than individual updates
+                # Use bulk update with a single transaction
                 for paste_id, increment in updates.items():
-                    # Note: In a real production system, you might want to use 
-                    # a more efficient approach like raw SQL or the SQLAlchemy ORM bulk update
                     db.query(Paste).filter(Paste.id == paste_id).update(
                         {"views": Paste.views + increment}
                     )
@@ -64,10 +88,12 @@ def sync_paste_views(db: Session, redis):
                 logger.error(f"Error updating paste view counts: {str(e)}")
                 
                 # Put the items back in the sync set
-                for paste_id, increment in updates.items():
-                    redis.sadd("pastes_to_sync", paste_id)
-                    redis.set(f"paste:{paste_id}:views_increment", increment)
-    
+                with redis.pipeline() as pipe:
+                    for paste_id, increment in updates.items():
+                        pipe.sadd("pastes_to_sync", paste_id)
+                        pipe.set(f"paste:{paste_id}:views_increment", increment)
+                    pipe.execute()
+
     duration = time.time() - start_time
     logger.info(f"View count sync completed in {duration:.2f} seconds")
 
